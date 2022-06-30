@@ -1,6 +1,10 @@
 const express=require("express");
 const cors=require("cors");
 const mongoose=require("mongoose");
+const bcrypt=require("bcrypt");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
 const app = express();
 app.use(express.json());
@@ -19,32 +23,35 @@ function(){
 const userSchema= new mongoose.Schema({
     name: String,
     email: String,
-    password: String
+    password: String,
+    list: { type : Array , "default" : [] }
 })
 
 const User = new mongoose.model("User", userSchema);
 
 app.post("/login", function(req, res){
     const { email, password} = req.body; 
-    User.findOne({email: email}, (err, user) =>{
+    User.findOne({email: email}, async (err, user) =>{
         if(user){
-            if(password === user.password){
-                console.log("Success!");
+            const compPass = await bcrypt.compare(password, user.password);
+            if(compPass){
                 res.send({message: "Login Successfull", user: user});
             }else{
-                console.log("Password Incorrect!");
-                res.send({message: "Password Incorrect!"});
+                res.send({message: "Incorrect Credentials!"});
             }
         }else{
-            console.log("user not found!");
-            res.send({message: "User not registered"});
+            res.send({message: "Incorrect Credentials!"});
         }
     })
 });
 
-app.post("/register", function(req, res){
+app.post("/register",async function(req, res){
     const {name, email, password} = req.body;
-    console.log(req.body);
+
+    const salt = await bcrypt.genSalt(10); 
+    const secPassword= await bcrypt.hash(password, salt);
+
+    
     User.findOne({email: email}, (err, user) => {
         if(user){
             res.send({message: "User already registered!"});
@@ -52,7 +59,7 @@ app.post("/register", function(req, res){
             const user = new User({
                 name,
                 email,
-                password
+                password: secPassword
             })
             user.save( err => {
                 if(err){
@@ -67,9 +74,6 @@ app.post("/register", function(req, res){
     
 });
 
-// app.post("/home", function(req, res){
-//     res.send
-// })
 
 app.listen(9002, function(){
     console.log("Port started at 9002");
