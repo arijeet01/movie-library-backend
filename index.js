@@ -2,9 +2,6 @@ const express=require("express");
 const cors=require("cors");
 const mongoose=require("mongoose");
 const bcrypt=require("bcrypt");
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
 
 const app = express();
 app.use(express.json());
@@ -23,8 +20,7 @@ function(){
 const userSchema= new mongoose.Schema({
     name: String,
     email: String,
-    password: String,
-    list: { type : Array , "default" : [] }
+    password: String
 })
 
 const User = new mongoose.model("User", userSchema);
@@ -73,7 +69,6 @@ app.post("/register",async function(req, res){
 
     
 });
-
 
 app.listen(9002, function(){
     console.log("Port started at 9002");
