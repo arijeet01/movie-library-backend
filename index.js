@@ -56,7 +56,7 @@ passport.deserializeUser(User.deserializeUser());
 
 
 
-app.get("/list/public/{listname}", function(){
+app.get("/list/public/: listname", function(){
         //get movielist acc to the list name also there will be a condition which will check whether the list 
         //is public or not
 });
@@ -107,7 +107,7 @@ app.post("/createlist", function(req, res){
                     listname: listname,
                     privacy: privacy,
                     movielist: movielist,
-                    URL: 'abc'
+                    URL: 'https://arijeetmoviehub.netlify.app/list/public/'+listname
                 })
                 List.findOne({'listname' :listname}, function(err, list){
                     if(!err){
