@@ -20,7 +20,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost:27017/movieDB",{
+mongoose.connect("mongodb+srv://arijeet_nayak:arinayak01@moviehub.r0tgguf.mongodb.net/?retryWrites=true&w=majority",{
     useNewUrlParser: true,
     useUnifiedTopology: true        
 },
