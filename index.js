@@ -4,6 +4,7 @@ const mongoose=require("mongoose");
 const session = require("express-session");
 const passport= require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+require('dotenv').config();
 
 const app = express();
 
@@ -130,22 +131,42 @@ app.post("/createlist", function(req, res){
 );
 
 app.post("/list", function(req, res){
-    List.find(function(err, lists){
+    const user= req.body;
+    List.find({'userId': user._id},function(err, lists){
+        //console.log(lists);
         res.send(lists);
     });
+
 });
 
 app.post("/addexisting", function(req, res){
     const {list}=req.body;
     const {movie}=req.body;
-    console.log(list.listname); 
-    console.log(movie);
+   // console.log(list.listname); 
+   // console.log(movie);
     List.findOne({'listname': list.listname}, function(err, list){
         list.movielist.push(movie);
         list.save();
     });
 });
 
-app.listen(9002, function(){
+app.post("/removelist", function(req, res){
+    const {movie, user, list} = req.body;
+    
+    List.findOne({'_id': list._id}, function(err, list){
+        list.movielist.pull(movie);
+        list.save()
+    })
+    
+    // List.findOne({ 'list.movielist': { $exists: true, $ne: null }}, function(err, empty){
+    //     console.log(empty);
+    // });
+    // List.deleteOne({ 'list.movielist': { $exists: true, $eq: [] } },function(err){})
+    //  const emptylist=;
+    //  console.log(emptylist);
+    // emptylist.deleteOne(function(err){});
+});
+
+app.listen(process.env.PORT || 9002, function(){
     console.log("Port started at 9002");
 });
