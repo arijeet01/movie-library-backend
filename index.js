@@ -57,8 +57,8 @@ passport.deserializeUser(User.deserializeUser());
 
 
 app.get("/list/public/: listname", function(){
-        //get movielist acc to the list name also there will be a condition which will check whether the list 
-        //is public or not
+    const listname = req.params.listname;
+        res.send("Hello"+listname);
 });
 
 
